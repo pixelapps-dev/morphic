@@ -96,7 +96,7 @@ export function ChatPanel() {
             ref={inputRef}
             type="text"
             name="input"
-            placeholder="Ask a question..."
+            placeholder="Ask a question about Metallica..."
             value={input}
             className="pl-4 pr-10 h-12 rounded-full bg-muted"
             onChange={e => {
