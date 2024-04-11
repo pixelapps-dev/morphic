@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { ThemeProvider } from '@/components/theme-provider'
 import Header from '@/components/header'
 import Footer from '@/components/footer'
+import Head from 'next/head'
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -47,6 +48,14 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
+      <Head>
+          {/* Add the script tag here */}
+          <script
+            defer
+            src="https://eu.umami.is/script.js"
+            data-website-id="1d8695f5-a4a9-4330-8918-2f1d1ebcf8d9"
+          ></script>
+        </Head>
         <body className={cn('font-sans antialiased', fontSans.variable)}>
           <ThemeProvider
             attribute="class"
