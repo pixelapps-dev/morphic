@@ -118,11 +118,19 @@ export function ChatPanel({
       )}
     >
       {messages.length === 0 && (
-        <div className="mb-10 flex flex-col items-center gap-4">
-          <IconLogo className="size-12 text-muted-foreground" />
-          <p className="text-center text-3xl font-semibold">
-            How can I help you today?
-          </p>
+        <div className="mb-12 flex flex-col items-center gap-6">
+          <div className="relative">
+            <IconLogo className="size-16 text-foreground drop-shadow-sm" />
+            <div className="absolute inset-0 size-16 animate-pulse bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-xl" />
+          </div>
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-light tracking-tight text-foreground">
+              How can I help you today?
+            </h1>
+            <p className="text-muted-foreground text-sm font-medium">
+              Ask me anything or start a conversation
+            </p>
+          </div>
         </div>
       )}
       <form
@@ -143,12 +151,12 @@ export function ChatPanel({
           </Button>
         )}
 
-        <div className="relative flex flex-col w-full gap-2 bg-muted rounded-3xl border border-input">
+        <div className="relative flex flex-col w-full gap-0 bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg shadow-black/5">
           <Textarea
             ref={inputRef}
             name="input"
-            rows={2}
-            maxRows={5}
+            rows={1}
+            maxRows={4}
             tabIndex={0}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
@@ -156,7 +164,7 @@ export function ChatPanel({
             spellCheck={false}
             value={input}
             disabled={isLoading || isToolInvocationInProgress()}
-            className="resize-none w-full min-h-12 bg-transparent border-0 p-4 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className="resize-none w-full min-h-14 bg-transparent border-0 px-4 pt-4 pb-2 text-base placeholder:text-muted-foreground/70 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 font-medium"
             onChange={e => {
               handleInputChange(e)
               setShowEmptyScreen(e.target.value.length === 0)
@@ -182,36 +190,45 @@ export function ChatPanel({
           />
 
           {/* Bottom menu area */}
-          <div className="flex items-center justify-between p-3">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between px-4 pb-3 pt-1 border-t border-border/30">
+            <div className="flex items-center gap-3">
               <ModelSelector models={models || []} />
               <SearchModeToggle />
             </div>
             <div className="flex items-center gap-2">
               {messages.length > 0 && (
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={handleNewChat}
-                  className="shrink-0 rounded-full group"
+                  className="shrink-0 rounded-full h-9 w-9 hover:bg-accent/50 transition-all duration-200 group"
                   type="button"
                   disabled={isLoading || isToolInvocationInProgress()}
                 >
-                  <MessageCirclePlus className="size-4 group-hover:rotate-12 transition-all" />
+                  <MessageCirclePlus className="size-4 group-hover:rotate-12 transition-transform duration-300" />
                 </Button>
               )}
               <Button
                 type={isLoading ? 'button' : 'submit'}
                 size={'icon'}
-                variant={'outline'}
-                className={cn(isLoading && 'animate-pulse', 'rounded-full')}
+                className={cn(
+                  'rounded-full h-9 w-9 shadow-sm transition-all duration-200',
+                  input.length > 0 && !isLoading
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80',
+                  isLoading && 'animate-pulse'
+                )}
                 disabled={
                   (input.length === 0 && !isLoading) ||
                   isToolInvocationInProgress()
                 }
                 onClick={isLoading ? stop : undefined}
               >
-                {isLoading ? <Square size={20} /> : <ArrowUp size={20} />}
+                {isLoading ? (
+                  <Square size={16} className="animate-pulse" />
+                ) : (
+                  <ArrowUp size={16} className="transition-transform group-hover:-translate-y-0.5" />
+                )}
               </Button>
             </div>
           </div>
