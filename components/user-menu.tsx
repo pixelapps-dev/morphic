@@ -1,9 +1,10 @@
 'use client'
 
+import { useEffect,useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { User } from '@supabase/supabase-js'
-import { Link2, LogOut, Palette } from 'lucide-react'
+import { LogOut, Palette, Settings, Shield } from 'lucide-react'
 
 import { createClient } from '@/lib/supabase/client'
 
@@ -21,7 +22,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { Button } from './ui/button'
-import { ExternalLinkItems } from './external-link-items'
 import { ThemeMenuItems } from './theme-menu-items'
 
 interface UserMenuProps {
@@ -30,10 +30,28 @@ interface UserMenuProps {
 
 export default function UserMenu({ user }: UserMenuProps) {
   const router = useRouter()
+  const [isAdmin, setIsAdmin] = useState(false)
+  
   const userName =
     user.user_metadata?.full_name || user.user_metadata?.name || 'User'
   const avatarUrl =
     user.user_metadata?.avatar_url || user.user_metadata?.picture
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      try {
+        // TODO: Replace with API call to check admin status
+        const response = await fetch('/api/auth/check-admin')
+        if (response.ok) {
+          const { isAdmin } = await response.json()
+          setIsAdmin(isAdmin)
+        }
+      } catch (error) {
+        console.error('Failed to check admin status:', error)
+      }
+    }
+    checkAdminStatus()
+  }, [user.id])
 
   const getInitials = (name: string, email: string | undefined) => {
     if (name && name !== 'User') {
@@ -87,15 +105,15 @@ export default function UserMenu({ user }: UserMenuProps) {
             <ThemeMenuItems />
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <Link2 className="mr-2 h-4 w-4" />
-            <span>Links</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <ExternalLinkItems />
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push('/admin')}>
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Admin Panel</span>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />

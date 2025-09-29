@@ -1,25 +1,24 @@
-import { ArrowRight } from 'lucide-react'
-
 import { Button } from '@/components/ui/button'
 
 const exampleMessages = [
   {
-    heading: 'What is DeepSeek R1?',
-    message: 'What is DeepSeek R1?'
+    heading: 'Explain quantum computing',
+    message: 'Explain quantum computing in simple terms'
   },
   {
-    heading: 'Why is Nvidia growing rapidly?',
-    message: 'Why is Nvidia growing rapidly?'
+    heading: 'Analyze market trends',
+    message: 'What are the current AI market trends?'
   },
   {
-    heading: 'Tesla vs Rivian',
-    message: 'Tesla vs Rivian'
+    heading: 'Write creative content',
+    message: 'Write a short story about space exploration'
   },
   {
-    heading: 'Summary: https://arxiv.org/pdf/2501.05707',
-    message: 'Summary: https://arxiv.org/pdf/2501.05707'
+    heading: 'Code assistance',
+    message: 'Help me debug this React component'
   }
 ]
+
 export function EmptyScreen({
   submitMessage,
   className
@@ -28,24 +27,19 @@ export function EmptyScreen({
   className?: string
 }) {
   return (
-    <div className={`mx-auto w-full transition-all ${className}`}>
-      <div className="bg-background p-2">
-        <div className="mt-2 flex flex-col items-start space-y-2 mb-4">
-          {exampleMessages.map((message, index) => (
-            <Button
-              key={index}
-              variant="link"
-              className="h-auto p-0 text-base"
-              name={message.message}
-              onClick={async () => {
-                submitMessage(message.message)
-              }}
-            >
-              <ArrowRight size={16} className="mr-2 text-muted-foreground" />
-              {message.heading}
-            </Button>
-          ))}
-        </div>
+    <div className={`mx-auto w-full transition-opacity ${className}`}>
+      <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+        {exampleMessages.map((message, index) => (
+          <Button
+            key={index}
+            variant="outline"
+            className="h-auto p-3 text-left justify-start"
+            name={message.message}
+            onClick={() => submitMessage(message.message)}
+          >
+            <span className="truncate">{message.heading}</span>
+          </Button>
+        ))}
       </div>
     </div>
   )

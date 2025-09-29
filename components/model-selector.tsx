@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 
-import { Check, ChevronsUpDown, Lightbulb } from 'lucide-react'
+import { Check, ChevronsUpDown } from 'lucide-react'
 
 import { Model } from '@/lib/types/models'
+import { cn } from '@/lib/utils'
 import { getCookie, setCookie } from '@/lib/utils/cookies'
-import { isReasoningModel } from '@/lib/utils/registry'
 
 import { createModelId } from '../lib/utils'
 
@@ -44,35 +44,18 @@ interface ModelSelectorProps {
 
 export function ModelSelector({ models }: ModelSelectorProps) {
   const [open, setOpen] = useState(false)
-  const [value, setValue] = useState('')
-
-  useEffect(() => {
+  const [value, setValue] = useState(() => {
     const savedModel = getCookie('selectedModel')
     if (savedModel) {
       try {
         const model = JSON.parse(savedModel) as Model
-        setValue(createModelId(model))
+        return createModelId(model)
       } catch (e) {
-        console.error('Failed to parse saved model:', e)
+        return ''
       }
     }
-  }, [])
-
-  const handleModelSelect = (id: string) => {
-    const newValue = id === value ? '' : id
-    setValue(newValue)
-
-    const selectedModel = models.find(
-      model => createModelId(model) === newValue
-    )
-    if (selectedModel) {
-      setCookie('selectedModel', JSON.stringify(selectedModel))
-    } else {
-      setCookie('selectedModel', '')
-    }
-
-    setOpen(false)
-  }
+    return ''
+  })
 
   const selectedModel = models.find(model => createModelId(model) === value)
   const groupedModels = groupModelsByProvider(models)
@@ -84,61 +67,68 @@ export function ModelSelector({ models }: ModelSelectorProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="text-sm rounded-full shadow-none focus:ring-0"
+          className="w-[180px] justify-between"
         >
           {selectedModel ? (
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center gap-2">
               <Image
                 src={`/providers/logos/${selectedModel.providerId}.svg`}
                 alt={selectedModel.provider}
-                width={18}
-                height={18}
-                className="bg-white rounded-full border"
+                width={16}
+                height={16}
+                className="rounded-full border bg-white"
               />
-              <span className="text-xs font-medium">{selectedModel.name}</span>
-              {isReasoningModel(selectedModel.id) && (
-                <Lightbulb size={12} className="text-accent-blue-foreground" />
-              )}
+              <span className="truncate text-sm">{selectedModel.name}</span>
             </div>
           ) : (
-            'Select model'
+            "Select model"
           )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-0" align="start">
+      <PopoverContent className="w-[300px] p-0">
         <Command>
           <CommandInput placeholder="Search models..." />
           <CommandList>
             <CommandEmpty>No model found.</CommandEmpty>
-            {Object.entries(groupedModels).map(([provider, models]) => (
+            {Object.entries(groupedModels).map(([provider, providerModels]) => (
               <CommandGroup key={provider} heading={provider}>
-                {models.map(model => {
+                {providerModels.map(model => {
                   const modelId = createModelId(model)
                   return (
                     <CommandItem
                       key={modelId}
                       value={modelId}
-                      onSelect={handleModelSelect}
-                      className="flex justify-between"
+                      onSelect={(currentValue) => {
+                        const newValue = currentValue === value ? '' : currentValue
+                        setValue(newValue)
+                        
+                        const selectedModel = models.find(
+                          model => createModelId(model) === newValue
+                        )
+                        if (selectedModel) {
+                          setCookie('selectedModel', JSON.stringify(selectedModel))
+                        } else {
+                          setCookie('selectedModel', '')
+                        }
+                        
+                        setOpen(false)
+                      }}
                     >
-                      <div className="flex items-center space-x-2">
-                        <Image
-                          src={`/providers/logos/${model.providerId}.svg`}
-                          alt={model.provider}
-                          width={18}
-                          height={18}
-                          className="bg-white rounded-full border"
-                        />
-                        <span className="text-xs font-medium">
-                          {model.name}
-                        </span>
-                      </div>
                       <Check
-                        className={`h-4 w-4 ${
-                          value === modelId ? 'opacity-100' : 'opacity-0'
-                        }`}
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          value === modelId ? "opacity-100" : "opacity-0"
+                        )}
                       />
+                      <Image
+                        src={`/providers/logos/${model.providerId}.svg`}
+                        alt={model.provider}
+                        width={16}
+                        height={16}
+                        className="mr-2 rounded-full border bg-white"
+                      />
+                      <span className="text-sm">{model.name}</span>
                     </CommandItem>
                   )
                 })}

@@ -148,7 +148,16 @@ const config = {
         'slide-out-right': 'slide-out-right 0.2s ease-out'
       },
       fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans]
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont', 
+          'SF Pro Display',
+          'SF Pro Text',
+          'Inter',
+          'system-ui',
+          'ui-sans-serif',
+          ...fontFamily.sans
+        ]
       }
     }
   },
