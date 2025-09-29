@@ -118,16 +118,13 @@ export function ChatPanel({
       )}
     >
       {messages.length === 0 && (
-        <div className="mb-12 flex flex-col items-center gap-6">
-          <div className="relative">
-            <IconLogo className="size-16 text-foreground drop-shadow-sm" />
-            <div className="absolute inset-0 size-16 animate-pulse bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-xl" />
-          </div>
-          <div className="text-center space-y-2">
-            <h1 className="text-4xl font-light tracking-tight text-foreground">
+        <div className="mb-8 flex flex-col items-center gap-4">
+          <IconLogo className="size-12 text-foreground" />
+          <div className="text-center space-y-1">
+            <h1 className="text-3xl font-normal text-foreground">
               How can I help you today?
             </h1>
-            <p className="text-muted-foreground text-sm font-medium">
+            <p className="text-muted-foreground text-sm">
               Ask me anything or start a conversation
             </p>
           </div>
@@ -135,23 +132,23 @@ export function ChatPanel({
       )}
       <form
         onSubmit={handleSubmit}
-        className={cn('max-w-3xl w-full mx-auto relative')}
+        className="max-w-2xl w-full mx-auto relative"
       >
-        {/* Scroll to bottom button - only shown when showScrollToBottomButton is true */}
+        {/* Scroll to bottom button */}
         {showScrollToBottomButton && messages.length > 0 && (
           <Button
             type="button"
             variant="outline"
             size="icon"
-            className="absolute -top-10 right-4 z-20 size-8 rounded-full shadow-md"
+            className="absolute -top-10 right-4 z-20 h-8 w-8 rounded-full"
             onClick={handleScrollToBottom}
             title="Scroll to bottom"
           >
-            <ChevronDown size={16} />
+            <ChevronDown className="h-4 w-4" />
           </Button>
         )}
 
-        <div className="relative flex flex-col w-full gap-0 bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg shadow-black/5">
+        <div className="relative flex flex-col w-full rounded-xl border bg-background shadow-sm">
           <Textarea
             ref={inputRef}
             name="input"
@@ -164,7 +161,7 @@ export function ChatPanel({
             spellCheck={false}
             value={input}
             disabled={isLoading || isToolInvocationInProgress()}
-            className="resize-none w-full min-h-14 bg-transparent border-0 px-4 pt-4 pb-2 text-base placeholder:text-muted-foreground/70 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 font-medium"
+            className="resize-none w-full min-h-12 bg-transparent border-0 px-4 pt-3 pb-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             onChange={e => {
               handleInputChange(e)
               setShowEmptyScreen(e.target.value.length === 0)
@@ -189,9 +186,9 @@ export function ChatPanel({
             onBlur={() => setShowEmptyScreen(false)}
           />
 
-          {/* Bottom menu area */}
-          <div className="flex items-center justify-between px-4 pb-3 pt-1 border-t border-border/30">
-            <div className="flex items-center gap-3">
+          {/* Bottom controls */}
+          <div className="flex items-center justify-between px-3 py-2 border-t">
+            <div className="flex items-center gap-2">
               <ModelSelector models={models || []} />
               <SearchModeToggle />
             </div>
@@ -199,35 +196,29 @@ export function ChatPanel({
               {messages.length > 0 && (
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={handleNewChat}
-                  className="shrink-0 rounded-full h-9 w-9 hover:bg-accent/50 transition-all duration-200 group"
                   type="button"
                   disabled={isLoading || isToolInvocationInProgress()}
+                  className="h-8"
                 >
-                  <MessageCirclePlus className="size-4 group-hover:rotate-12 transition-transform duration-300" />
+                  <MessageCirclePlus className="h-4 w-4" />
                 </Button>
               )}
               <Button
                 type={isLoading ? 'button' : 'submit'}
-                size={'icon'}
-                className={cn(
-                  'rounded-full h-9 w-9 shadow-sm transition-all duration-200',
-                  input.length > 0 && !isLoading
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80',
-                  isLoading && 'animate-pulse'
-                )}
+                size="sm"
                 disabled={
                   (input.length === 0 && !isLoading) ||
                   isToolInvocationInProgress()
                 }
                 onClick={isLoading ? stop : undefined}
+                className="h-8"
               >
                 {isLoading ? (
-                  <Square size={16} className="animate-pulse" />
+                  <Square className="h-4 w-4" />
                 ) : (
-                  <ArrowUp size={16} className="transition-transform group-hover:-translate-y-0.5" />
+                  <ArrowUp className="h-4 w-4" />
                 )}
               </Button>
             </div>
